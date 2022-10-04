@@ -48,7 +48,7 @@ liste_inside = []
 def clique(event):
     X = event.x
     Y = event.y
-    r = 5
+    r = 3
     surface.create_rectangle(X-r,Y-r,X+r,Y+r,outline = 'black', fill = 'black')
     point = TwoDPoint(X,Y)
     if(len(liste_points) != 0):
@@ -59,7 +59,7 @@ def clique(event):
 def point(event):
     X = event.x
     Y = event.y
-    r = 5
+    r = 3
     surface.create_oval(X-r,Y-r,X+r,Y+r, outline = 'black', fill='black')
     point = TwoDPoint(X,Y)
     liste_inside.append(point)
@@ -138,8 +138,8 @@ geo_app.mainloop()
 #Convex Hull
 
 #Dimension fenêtre
-LARGEUR = 300
-HAUTEUR = 300
+LARGEUR = 480
+HAUTEUR = 350
 
 #Création de la fenêtre
 geo_app = tk.Tk()
@@ -150,6 +150,7 @@ surface = tk.Canvas(geo_app, width=LARGEUR, height=HAUTEUR, bg="white")
 surface.pack(padx = 5, pady = 5)
 
 import random 
+import time
 
 lst_pts = []
 lst_smg = []
@@ -157,7 +158,7 @@ lst_smg_hull = []
 
 def CreateRandomPoints():
     for  i in range(10):
-        r = 5
+        r = 3
         x = random.randint(10,250)
         y = random.randint(10,250)
         p = TwoDPoint(x,y)
@@ -171,6 +172,11 @@ def ExtremeEdges():
             lst_smg.append(segment)
     
     for segment in lst_smg:
+        surface.create_line(segment.get_A().get_x(), segment.get_A().get_y(), segment.get_B().get_x(), segment.get_B().get_y())
+        time.sleep(0.1)
+        surface.update()
+        surface.create_line(segment.get_A().get_x(), segment.get_A().get_y(), segment.get_B().get_x(), segment.get_B().get_y(), fill="white")
+
         res = 0
         for point in lst_pts:
             if(orientation_point(segment,point) == 1):
@@ -181,7 +187,9 @@ def ExtremeEdges():
     for s in lst_smg_hull:
         s.display_segment()
         surface.create_line(s.get_A().get_x(),s.get_A().get_y(),s.get_B().get_x(),s.get_B().get_y())
-        
+        time.sleep(0.2)
+        surface.update()
+
 def Jarvis():
     #Point le plus à gauche
     a = min(lst_pts, key=lambda point: point.get_x())
@@ -198,6 +206,11 @@ def Jarvis():
             if(i==l):
                 continue
             s = Segment(lst_pts[l],lst_pts[i])
+            surface.create_line(s.get_A().get_x(), s.get_A().get_y(), s.get_B().get_x(), s.get_B().get_y())
+            time.sleep(0.1)
+            surface.update()
+            surface.create_line(s.get_A().get_x(), s.get_A().get_y(), s.get_B().get_x(), s.get_B().get_y(), fill="white")
+
             if(orientation_point(s,lst_pts[q])==1):
                 q = i
         l = q
@@ -209,47 +222,68 @@ def Jarvis():
     for i in range(len(res)): 
         if(i != len(res)-1):
             surface.create_line(res[i].get_x(),res[i].get_y(),res[i+1].get_x(),res[i+1].get_y())
+            time.sleep(0.1)
+            surface.update()
         else:
             surface.create_line(res[-1].get_x(), res[-1].get_y(), res[0].get_x(), res[0].get_y())
+            time.sleep(0.1)
+            surface.update()
 
-def Graham():
-    #Find y smallest coordinate
-    p0 = min(lst_pts, key=lambda point: point.get_y())
-    index = lst_pts.index(p0)
+def MostLeft(p) :
+    pointAGauche = lst_pts[0]
+    for pointCandidat in lst_pts :
+        if (pointAGauche) == p or (orientation_point(Segment(p,pointAGauche),pointCandidat)==1) :
+            pointAGauche = pointCandidat
+    return (pointAGauche)
 
-    lst_pts[0], lst_pts[index] = lst_pts[index], lst_pts[0]
-    sorted_polar = sorted(lst_pts[1:], cmp = lambda p1, p2: orientation_point(Segment(p1,p2),p0))
+def Tri() :
+    mini =  min(lst_pts, key=lambda point: point.get_x())
+    T = []
+    T.append(mini)
+    i = 0
+    while 0 != len(lst_pts) :
+        if i != 0 :
+            T.append(MostLeft(mini))
+            lst_pts.remove(MostLeft(mini))
+        i+=1
+    return T
 
-    remove = []
-    for i in range(len(sorted_polar) -1):
-        s = Segment(sorted_polar[i],sorted_polar[i+1])
-        if(orientation_point(s,p0)==0):
-            remove.append(i)
-    sorted_polar = [i for j, i in enumerate(sorted_polar) if j not in remove]
-    
-    m = len(sorted_polar)
-    if(m<2):
-        print("Convex hull is empty")
-    else:
-        stack = []
-        stack_size = 0
-        stack.append(lst_pts[0])
-        stack.append(sorted_polar[0])
-        stack.append(sorted_polar[1])
-        stack_size = 3
+def Graham() :
+    T = []
+    TabTrie = []
+    TabTrie = Tri()
+    T.append(TabTrie[0])
+    T.append(TabTrie[1])
 
-        for i in range(2,m):
-            while(True):
-                s = Segment(stack[stack_size-2], stack[stack_size-1])
-                if(orientation_point(s,sorted_polar[i])==0):
-                    break
-                else:
-                    stack.pop()
-                    stack_size -= 1
-            stack.append(sorted_polar[i])
-            stack_size += 1
+    i=2
+    while (i!=len(TabTrie)):
+        while(len(T)>=2) and (orientation_point(Segment(T[len(T)-2],T[len(T)-1]),TabTrie[i])==1) :
+            T.remove(T[len(T)-1])
+        T.append(TabTrie[i])
+        surface.create_line(TabTrie[i].get_x(),TabTrie[i].get_y(), TabTrie[i-1].get_x(), TabTrie[i-1].get_y())
+        time.sleep(0.3)
+        surface.update()
+        surface.create_line(TabTrie[i].get_x(),TabTrie[i].get_y(), TabTrie[i-1].get_x(), TabTrie[i-1].get_y(), fill="white")
+        i+=1
 
-CreateRandomPoints()
+    for i in range(len(T)): 
+        if(i != len(T)-1):
+            surface.create_line(T[i].get_x(),T[i].get_y(),T[i+1].get_x(),T[i+1].get_y())
+            time.sleep(0.1)
+            surface.update()
+        else:
+            surface.create_line(T[-1].get_x(), T[-1].get_y(), T[0].get_x(), T[0].get_y())
+            time.sleep(0.1)
+            surface.update()
+
+def clear():
+    surface.delete("all")
+    lst_pts.clear()
+    lst_smg.clear()
+    lst_smg_hull.clear()
+
+#Selectionner la méthode Générer point
+tk.Button(geo_app, text = 'Generate Points', command = CreateRandomPoints).pack(side='left')
 
 #Selectionner la méthode Extreme Edges
 tk.Button(geo_app, text = 'Extreme Edges', command = ExtremeEdges).pack(side='left')
@@ -258,10 +292,13 @@ tk.Button(geo_app, text = 'Extreme Edges', command = ExtremeEdges).pack(side='le
 tk.Button(geo_app, text = 'Jarvis', command = Jarvis).pack(side='left')
 
 #Selectionner la méthode Jarvis
-tk.Button(geo_app, text = 'Graham', command = Jarvis).pack(side='left')
+tk.Button(geo_app, text = 'Graham', command = Graham).pack(side='left')
 
 #Permet de quitter la fenêtre
 tk.Button(geo_app, text = 'Quitter', command = geo_app.destroy).pack(side='right')
+
+#Permet de quitter la fenêtre
+tk.Button(geo_app, text = 'Clear', command = clear).pack(side='right')
 
 geo_app.mainloop()
                   

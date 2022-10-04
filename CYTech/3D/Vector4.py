@@ -1,3 +1,4 @@
+
 class vec4:
 
     #Constructeur
@@ -19,11 +20,15 @@ class vec4:
     def get_w(self):
         return self.w
 
+    def liste_points(self):
+        lst = [self.get_x(), self.get_y(), self.get_z(), self.get_w()]
+        return lst    
+
     def multiplication(self, k):
-        return(k*self.x, k*self.y, k*self.z, k*self.w)
+        return vec4(k*self.x, k*self.y, k*self.z, k*self.w)
 
     def hom2cart(self):
-        return(self.x/self.w, self.y/self.w, self.z/self.w)
+        return (self.x/self.w, self.y/self.w, self.z/self.w)
     
     def print(self):
         print("[",self.x,",",self.y,",",self.z,",",self.w,"]")
