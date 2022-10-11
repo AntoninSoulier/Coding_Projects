@@ -67,47 +67,57 @@ def multiply_m(a, b):
                 for k in range(b_rows):
                     product[i][j] += a[i][k] * b[k][j]
     else:
-        print("INCOMPATIBLE MATRIX SIZES")
+        print("Taille des matrices incompatibles")
     return product  
 
 def connect_points(i,j,points):
     pygame.draw.line(window, (255,255,255), (points[i][0], points[i][1]), (points[j][0], points[j][1]))
 
-scale = 100
+
 angle_x = angle_y = angle_z = 0
+sc = 1
+res = 1
 
 while(True):
+
     clock.tick(60)
     window.fill((0,0,0))
+
     rotation_x = [[1, 0, 0],
-                    [0, cos(angle_x), -sin(angle_x)],
-                    [0, sin(angle_x), cos(angle_x)]]
+                  [0, cos(angle_x), -sin(angle_x)],
+                  [0, sin(angle_x), cos(angle_x)]]
 
     rotation_y = [[cos(angle_y), 0, sin(angle_y)],
-                    [0, 1, 0],
-                    [-sin(angle_y), 0, cos(angle_y)]]
+                  [0, 1, 0],
+                  [-sin(angle_y), 0, cos(angle_y)]]
 
     rotation_z = [[cos(angle_z), -sin(angle_z), 0],
-                    [sin(angle_z), cos(angle_z), 0],
-                    [0, 0, 1]]
+                  [sin(angle_z), cos(angle_z), 0],
+                  [0, 0, 1]]
+                
+    scale_matrix = [[sc,0,0],[0,sc,0],[0,0,sc]] 
     
     points = [0 for _ in range(len(cube_points))]
     i=0
     for point in cube_points:
         
+        #Rotate point
         rotate_x = multiply_m(rotation_x, point)
         rotate_y = multiply_m(rotation_y, rotate_x)
         rotate_z = multiply_m(rotation_z, rotate_y)
+        
+        #Scale point
+        scaled_point = multiply_m(scale_matrix,rotate_z)
 
-        point_2d = multiply_m(projection_matrix,rotate_z)
-       
-        x = (point_2d[0][0] * scale) + WINDOW_SIZE/2
-        y = (point_2d[1][0] * scale) + WINDOW_SIZE/2
-        print("[",x,",",y,"]")
+        #Remove coordinate z (create 2d point)
+        point_2d = multiply_m(projection_matrix,scaled_point)
+
+        x = (point_2d[0][0] * 100) + WINDOW_SIZE/2
+        y = (point_2d[1][0] * 100) + WINDOW_SIZE/2
         points[i] = (x,y)
         i += 1
-        pygame.draw.circle(window, (255,0,0), (x,y), 3) 
-
+        pygame.draw.circle(window, (0,0,255), (x,y), 4) 
+    
     connect_points(0, 1, points)
     connect_points(0, 3, points)
     connect_points(0, 4, points)
@@ -134,5 +144,9 @@ while(True):
             angle_x += 0.05
         if(keys[pygame.K_q]):
             angle_z += 0.05
+        if(keys[pygame.K_p]):
+            sc += 0.01
+        if(keys[pygame.K_m]):
+            sc -= 0.01
 
     pygame.display.update()
