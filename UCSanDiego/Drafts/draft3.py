@@ -216,7 +216,7 @@ def square(size):
                 print(" *"*stars,end=' ')
                 stars-=1
                 print("")
-    
+#Call  
 form(10)
 square(10)
 diamond(5)

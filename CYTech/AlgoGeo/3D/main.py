@@ -1,4 +1,3 @@
-from lib2to3 import pygram
 from Vector3 import vec3
 from Vector4 import vec4
 from mat4 import mat4
@@ -24,11 +23,9 @@ matrice2 = mat4(v1,v2,v3,v4)
 
 matrice1.print()
 print(" ")
-
-matrice1.mat_mat_mul(matrice2).print()
-
+l.print()
 print(" ")
-matrice1.inv().print()
+matrice1.mat_vec_mul(l).print()
 
 #Affichage
 
@@ -37,20 +34,20 @@ WINDOW_SIZE = 800
 window = pygame.display.set_mode( (WINDOW_SIZE,WINDOW_SIZE) )
 clock = pygame.time.Clock()
 
-projection_matrix = [[1,0,0],
-                     [0,1,0],
-                     [0,0,0]]
+projection_matrix = mat4(vec4(1,0,0,0),vec4(0,1,0,0),vec4(0,0,1,0),vec4(0,0,0,1))
 
 cube_points = [n for n in range(8)]
-cube_points[0] = [[-1], [-1], [1]]
-cube_points[1] = [[1], [-1], [1]]
-cube_points[2] = [[1], [1], [1]]
-cube_points[3] = [[-1], [1], [1]]
+cube_points[0] = vec4(-1,-1,1,1)
+cube_points[1] = vec4(1,-1,1,1)
+cube_points[2] = vec4(1,1,1,1)
+cube_points[3] = vec4(-1,1,1,1)
 
-cube_points[4] = [[-1], [-1], [-1]]
-cube_points[5] = [[1], [-1], [-1]]
-cube_points[6] = [[1], [1], [-1]]
-cube_points[7] = [[-1], [1], [-1]]
+cube_points[4] = vec4(-1,-1,-1,1)
+cube_points[5] = vec4(1,-1,-1,1)
+cube_points[6] = vec4(1,1,-1,1)
+cube_points[7] = vec4(-1,1,-1,1)
+
+print(cube_points)
 
 def multiply_m(a, b):
     a_rows = len(a)
@@ -58,7 +55,6 @@ def multiply_m(a, b):
 
     b_rows = len(b)
     b_cols = len(b[0])
-    # Dot product matrix dimentions = a_rows x b_cols
     product = [[0 for _ in range(b_cols)] for _ in range(a_rows)]
 
     if a_cols == b_rows:
@@ -73,7 +69,6 @@ def multiply_m(a, b):
 def connect_points(i,j,points):
     pygame.draw.line(window, (255,255,255), (points[i][0], points[i][1]), (points[j][0], points[j][1]))
 
-
 angle_x = angle_y = angle_z = 0
 sc = 1
 res = 1
@@ -83,37 +78,31 @@ while(True):
     clock.tick(60)
     window.fill((0,0,0))
 
-    rotation_x = [[1, 0, 0],
-                  [0, cos(angle_x), -sin(angle_x)],
-                  [0, sin(angle_x), cos(angle_x)]]
+    rotation_x = mat4(vec4(1,0,0,0),vec4(0, cos(angle_x), sin(angle_x),0),vec4(0, -sin(angle_x), cos(angle_x),0),vec4(0,0,0,1))
 
-    rotation_y = [[cos(angle_y), 0, sin(angle_y)],
-                  [0, 1, 0],
-                  [-sin(angle_y), 0, cos(angle_y)]]
+    rotation_y = mat4(vec4(cos(angle_y), 0, -sin(angle_y),0),vec4(0, 1, 0, 0),vec4(sin(angle_y), 0, cos(angle_y),0),vec4(0,0,0,1))
 
-    rotation_z = [[cos(angle_z), -sin(angle_z), 0],
-                  [sin(angle_z), cos(angle_z), 0],
-                  [0, 0, 1]]
+    rotation_z = mat4(vec4(cos(angle_z), sin(angle_z), 0, 0),vec4(-sin(angle_z), cos(angle_z), 0, 0),vec4(0,0,1,0),vec4(0,0,0,1))
                 
-    scale_matrix = [[sc,0,0],[0,sc,0],[0,0,sc]] 
+    scale_matrix = mat4(vec4(sc,0,0,0),vec4(0,sc,0,0),vec4(0,0,sc,0),vec4(0,0,0,sc)) 
     
     points = [0 for _ in range(len(cube_points))]
     i=0
     for point in cube_points:
-        
+
         #Rotate point
-        rotate_x = multiply_m(rotation_x, point)
-        rotate_y = multiply_m(rotation_y, rotate_x)
-        rotate_z = multiply_m(rotation_z, rotate_y)
+        rotate_x = rotation_x.mat_vec_mul(point)
+        rotate_y = rotation_y.mat_vec_mul(rotate_x)
+        rotate_z = rotation_z.mat_vec_mul(rotate_y)
         
         #Scale point
-        scaled_point = multiply_m(scale_matrix,rotate_z)
+        scaled_point = scale_matrix.mat_vec_mul(rotate_z)
 
         #Remove coordinate z (create 2d point)
-        point_2d = multiply_m(projection_matrix,scaled_point)
+        point_2d = projection_matrix.mat_vec_mul(scaled_point)
 
-        x = (point_2d[0][0] * 100) + WINDOW_SIZE/2
-        y = (point_2d[1][0] * 100) + WINDOW_SIZE/2
+        x = (point_2d.get_x() * 100) + WINDOW_SIZE/2
+        y = (point_2d.get_y() * 100) + WINDOW_SIZE/2
         points[i] = (x,y)
         i += 1
         pygame.draw.circle(window, (0,0,255), (x,y), 4) 

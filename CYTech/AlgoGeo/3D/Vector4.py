@@ -1,4 +1,3 @@
-
 class vec4:
 
     #Constructeur
