@@ -27,17 +27,32 @@ triangle_points[1] = vec4(1,0,0,1)
 triangle_points[2] = vec4(0.5,1,0,1)
 triangle_points[3] = vec4(0.5,0.5,1,1)
 
-projection_matrix = mat4(
-                        vec4(1,0,0,0),
-                        vec4(0,1,0,0),
-                        vec4(0,0,0,0),
-                        vec4(0,0,0,0)
-                    )
-                    
+viewport_matrix = mat4(
+                       vec4(800/2,0,0,0),
+                       vec4(0,800/2,0,0),
+                       vec4(0,0,(0.75-0.25)/2,0),
+                       vec4(800/4,800/4,1/2,1)
+                       )
+
+ortographic_projection_matrix = mat4(
+                                    vec4(2/10,0,0,0),
+                                    vec4(0,2/10,0,0),
+                                    vec4(0,0,-2/(0.75-0.25),0),
+                                    vec4(-30/10,-30/10,-(0.75+0.25)/0.75-0.25,1)
+                                    )
+
+perspective_projection_matrix = mat4(
+                                    vec4(2*0.25/10,0,0,0),
+                                    vec4(0,2*0.25/10,0,0),
+                                    vec4(30/10,30/10,(0.75+0.25)/0.25-0.75,-1),
+                                    vec4(0,0,2*0.75*0.25/0.25-0.75,0)
+                                    )
+
 angle_x = angle_y = angle_z = 0.0
 tx = ty = tz = 0.0
 sc = 1.0
 res = 1
+teta = 0
 carre = False
 triangle = False
 
@@ -52,32 +67,36 @@ while(True):
     window.fill((0,0,0))
     window.blit(text1,textRect)
 
+    #Roll
     rotation_x = mat4(
                         vec4(1,0,0,0),
                         vec4(0, cos(angle_x), sin(angle_x),0),
                         vec4(0, -sin(angle_x), cos(angle_x),0),
                         vec4(0,0,0,1)
                     )
-
+    #Pitch
     rotation_y = mat4(
                         vec4(cos(angle_y), 0, -sin(angle_y),0),
                         vec4(0, 1, 0, 0),
                         vec4(sin(angle_y), 0, cos(angle_y),0),
                         vec4(0,0,0,1)
                     )
-
+    #Yaw
     rotation_z = mat4(
                         vec4(cos(angle_z), sin(angle_z), 0, 0),
                         vec4(-sin(angle_z), cos(angle_z), 0, 0),
                         vec4(0,0,1,0),
                         vec4(0,0,0,1)
                     )
+    
+    # Roll * Pitch * Yaw
+    Euler_matrix = (rotation_x.mat_mat_mul(rotation_y)).mat_mat_mul(rotation_z)
 
     scale_matrix = mat4(
                         vec4(sc,0,0,0),
                         vec4(0,sc,0,0),
                         vec4(0,0,sc,0),
-                        vec4(0,0,0,sc)
+                        vec4(0,0,0,1)
                     ) 
     
     translation_matrix = mat4(
@@ -90,24 +109,21 @@ while(True):
         points = [0 for _ in range(len(cube_points))]
         i=0
         for point in cube_points:
-
-            #Rotate point
-            rotate_x = rotation_x.mat_vec_mul(point)
-            rotate_y = rotation_y.mat_vec_mul(rotate_x)
-            rotate_z = rotation_z.mat_vec_mul(rotate_y)
             
-            #Scale point
-            scaled_point = scale_matrix.mat_vec_mul(rotate_z)
+            #Model Matrix: Translate - Scale - Rotate | Object Coordinate to World Coordinate
+            point_2d = translation_matrix.mat_vec_mul(scale_matrix.mat_vec_mul((rotation_z.mat_vec_mul(rotation_y.mat_vec_mul(rotation_x.mat_vec_mul(point)))))) #point_2d = translation_matrix.mat_mat_mul(scale_matrix).mat_mat_mul(rotation_z).mat_mat_mul(rotation_y).mat_mat_mul(rotation_x).mat_vec_mul(point)
 
-            #translated point
-            translated_point = translation_matrix.mat_vec_mul(scaled_point)
+            #View Matrix
+            pt = viewport_matrix.mat_vec_mul(point_2d)
             
-            #Ortographic projection
-            point_2d = projection_matrix.mat_vec_mul(translated_point)
+            #Projection Matrix
+            p = ortographic_projection_matrix.mat_vec_mul(pt)
+            p.print()
 
             #Récupération des coordonnées x et y
-            x = (point_2d.get_x() * 100) + WINDOW_SIZE/2
-            y = (point_2d.get_y() * 100) + WINDOW_SIZE/2
+            x = p.get_x()
+            y = p.get_y()
+            
             points[i] = (x,y)
             i += 1
             pygame.draw.circle(window, (0,0,255), (x,y), 4) 
@@ -182,7 +198,7 @@ while(True):
             #print(translated_point.get_x(),"",translated_point.get_y(),"",translated_point.get_z(),"",translated_point.get_w())
             
             #Ortographic projection
-            point_2d = projection_matrix.mat_vec_mul(translated_point)
+            point_2d = translated_point
 
             #Récupération des coordonnées x et y
             x = (point_2d.get_x() * 100) + WINDOW_SIZE/2
@@ -236,6 +252,8 @@ while(True):
             ty -= 0.05
         if(keys[pygame.K_DOWN]):
             ty += 0.05
+        if(keys[pygame.K_h]):
+            teta+=0.1
         if(keys[pygame.K_b]):
             triangle = False
             carre = True

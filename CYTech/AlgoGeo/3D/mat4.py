@@ -24,10 +24,19 @@ class mat4:
     def get_listeVecteur(self):
         return self.listeVecteur
     
+    def somme(self,m):
+        res = mat4(
+            vec4(self.get_v1().get_x() + m.get_v1().get_x(),self.get_v1().get_y() + m.get_v1().get_y(), self.get_v1().get_z() + m.get_v1().get_z(),self.get_v1().get_w() + m.get_v1().get_w()),
+            vec4(self.get_v2().get_x() + m.get_v2().get_x(),self.get_v2().get_y() + m.get_v2().get_y(), self.get_v2().get_z() + m.get_v2().get_z(),self.get_v2().get_w() + m.get_v2().get_w()),
+            vec4(self.get_v3().get_x() + m.get_v3().get_x(),self.get_v3().get_y() + m.get_v3().get_y(), self.get_v3().get_z() + m.get_v3().get_z(),self.get_v3().get_w() + m.get_v3().get_w()),
+            vec4(self.get_v4().get_x() + m.get_v4().get_x(),self.get_v4().get_y() + m.get_v4().get_y(), self.get_v4().get_z() + m.get_v4().get_z(),self.get_v4().get_w() + m.get_v4().get_w())
+        )
+        return res
+    
     def scalar_mul(self,k): 
         matrice = mat4(self.v1.multiplication(k), self.v2.multiplication(k), self.v3.multiplication(k), self.v4.multiplication(k))
         return matrice
-            
+        
     def mat_vec_mul(self,vecteur):
         res = vec4(
             self.v1.get_x() * vecteur.get_x() + self.v2.get_x() * vecteur.get_y() + self.v3.get_x() * vecteur.get_z() + self.v4.get_x() * vecteur.get_w(),

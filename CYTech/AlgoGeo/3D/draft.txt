@@ -1,5 +1,0 @@
-Création de points:
-
-Point 0 --> Vec4(0,0,0,1)
-point 1 --> Vec4(1,0,0,1)
-point 2 --> Vec4(1,1,0,1)
