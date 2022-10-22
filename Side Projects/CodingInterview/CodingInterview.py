@@ -254,3 +254,4 @@ def Reorganize(word):
 word = "vvvlo"
 print(Reorganize(word))
 
+print("lala")
