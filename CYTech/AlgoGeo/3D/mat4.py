@@ -1,4 +1,5 @@
 from Vector4 import vec4
+import numpy as np
 
 class mat4:
 
@@ -64,7 +65,6 @@ class mat4:
         print("|",self.v1.get_w()," ", self.v2.get_w()," ", self.v3.get_w()," ",self.v4.get_w(),"|")
 
     def inv(self):
-        import numpy as np
         liste_vecteur = self.get_listeVecteur()
 
         v1 = []

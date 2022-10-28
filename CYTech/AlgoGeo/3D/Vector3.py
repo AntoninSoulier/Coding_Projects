@@ -30,6 +30,9 @@ class vec3:
     def multiplication(self, k):
         return vec3(k*self.x, k*self.y, k*self.z)
 
+    def division(self,k):
+        return vec3(self.x/k,self.y/k,self.z/k)
+        
     def addition(self, w):
         return vec3(self.x + w.get_x(), self.y + w.get_y(), self.z + w.get_z())
     
@@ -37,7 +40,7 @@ class vec3:
         return vec3(self.x - w.get_x(), self.y - w.get_y(), self.z - w.get_z())
     
     def dot(self,w):
-        return vec3(self.x * w.get_x() + self.y * w.get_y() + self.z * w.get_z())
+        return (self.x * w.get_x() + self.y * w.get_y() + self.z * w.get_z())
 
     def cross(self,w):
         return vec3(self.y*w.get_z() - self.z*w.get_y(), self.z*w.get_x() - self.x*w.get_z(), self.x*w.get_y() - self.y*w.get_x())

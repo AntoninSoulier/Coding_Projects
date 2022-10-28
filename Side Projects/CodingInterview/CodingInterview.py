@@ -234,7 +234,8 @@ def Reorganize(word):
         for cle,valeur in dic.items():
             res = 0  
             m = max(dic,key=dic.get)
-            if(m != cle and m != last_char and valeur > 0):
+            
+            if(m != cle and m != last_char and dic[m] > 0):
                 organized+=m
                 dic[m]-=1
                 last_char = m
@@ -244,6 +245,13 @@ def Reorganize(word):
                 dic[cle] -= 1
                 last_char = cle
                 res+=1
+
+            """print(organized)
+            print(cle)
+            for k,v in dic.items():
+                print(k,v)
+            print("")"""
+
         for val in dic.values():
             total += val
         if(total == 0):
@@ -251,7 +259,164 @@ def Reorganize(word):
         elif(total != 0 and res == 0):
             return("")
 
-word = "vvvlo"
+word = "kkkkzrkatkwpkkkktrq"
 print(Reorganize(word))
 
-print("lala")
+def Longest(s):
+    if(len(s)==0):
+        return(0)
+    elif(s == " " or len(s) == 1):
+        return(1)
+    else:
+        dic = {}
+        for i in range(len(s)):
+            for j in range(i+1,len(s)):
+                sub_word = []
+                for k in range(i,j+1):
+                    if(s[k] not in sub_word):
+                        sub_word.append(s[k])
+                    else:
+                        break
+                    dic[(i,j)] = len(sub_word)
+
+        m = max(dic,key=dic.get, default=0)
+        return(dic[m])
+
+word = "abcabcbb"
+print("Longest word:",Longest(word))
+
+def Alien(words,order):
+    res = True
+    for i in range(len(words)-1):
+        word1 = words[i]
+        word2 = words[i+1]
+        j=0
+        c = False
+        while(j<len(word1) and j<len(word2) and word1[j] == word2[j]):
+            j+=1
+            #check if we are in the case of a prefix: [hello,he]
+            if(len(word1)-1<j or len(word2)-1<j):
+                if(len(word1)>len(word2)):
+                    long = word1
+                    small = word2
+                else:
+                    long = word2
+                    small = word1
+                if(words.index(long)<words.index(small)):
+                    return(False)
+                else:
+                    c = True
+        
+        if(c == False and order.index(word1[j]) > order.index(word2[j])):
+            res = False
+    return(res)
+
+words = ["hello","leetcode"]
+order = "hlabcdefgijkmnopqrstuvwxyz"
+print("Ordered:",Alien(words,order))
+
+
+def isDifferent(lst):
+    tmp_lst = []
+    for element in lst:
+        if(element not in tmp_lst):
+            tmp_lst.append(element)
+        else:
+            return(False)
+    return(True)
+
+def maxProducts(lst):
+    res = []
+    if(len(lst)<3):
+        return(0)
+    elif(len(lst) == 3):
+        if(isDifferent(lst)):
+            return(sum(lst))
+        else:
+            return(0)
+    else:
+        for i in range(len(lst)-2):
+            tmp = []
+            for j in range(i,i+3):
+                tmp.append(lst[j])
+            if(isDifferent(tmp)):
+                m = sum(tmp)
+                res.append(m)
+        return(max(res))
+
+sales = [0,1,3,3,5,6]
+print(maxProducts(sales))
+
+def FirstUnique(s):
+    dic = {}
+    for i in range(len(s)):
+        if(s[i] in dic):
+            dic[s[i]] += 1
+        else:
+            dic[s[i]] = 1
+    for key,val in dic.items():
+        if(val == 1):
+            return(s.index(key))
+    return(-1)
+
+s = "loveleetcode"
+print(FirstUnique(s))
+
+def ispow2(n):
+    if(n == 1):
+        return(True)
+    else:
+        g = 2
+        while(g<=n):
+            if(n == g):
+                return(True)
+            g *= 2
+        return(False)
+
+#print(ispow2(64))
+
+def Origin(moves):
+    i=0
+    j=0
+    for ope in moves:
+        if(ope=="L"):
+            i-=1
+        elif(ope=="R"):
+            i+=1
+        elif(ope=="U"):
+            j-=1
+        elif(ope=="D"):
+            j+=1
+    return(i==0 and j==0)
+
+operation = "LL"
+print(Origin(operation))
+
+def MissingNumber(nums):
+    i = 0
+    while(True):
+        if(i not in nums):
+            return(i)
+        i+=1
+lst = [9,6,4,2,3,5,7,0,1]
+print(MissingNumber(lst))
+
+#Maximum number of Baloons
+def MaxBaloons(s):
+    word = "baloon"
+    dic = {}
+    state = True
+    for char in s:
+        if(char not in dic):
+            dic[char] = 1
+        else:
+            dic[char] += 1
+            
+    for char in word:
+        if(char in dic):
+            dic[char]-=1
+            if(dic[char] == 0):
+                state = False
+
+s = "nlaebolko"
+MaxBaloons(s)

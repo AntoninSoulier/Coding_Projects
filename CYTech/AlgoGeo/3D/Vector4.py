@@ -28,6 +28,9 @@ class vec4:
 
     def hom2cart(self):
         return (self.x/self.w, self.y/self.w, self.z/self.w)
+
+    def perspective_div(self):
+        return vec4(self.x/self.w, self.y/self.w, self.z/self.w,1)
     
     def print(self):
         print("[",self.x,",",self.y,",",self.z,",",self.w,"]")
