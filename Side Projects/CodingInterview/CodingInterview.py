@@ -401,22 +401,36 @@ def MissingNumber(nums):
 lst = [9,6,4,2,3,5,7,0,1]
 print(MissingNumber(lst))
 
-#Maximum number of Baloons
-def MaxBaloons(s):
-    word = "baloon"
+def MaxBaloons(str):
+    word = "balloon"
     dic = {}
-    state = True
-    for char in s:
+    s = True
+    t = 0
+    for char in str:
         if(char not in dic):
             dic[char] = 1
         else:
             dic[char] += 1
-            
-    for char in word:
-        if(char in dic):
-            dic[char]-=1
-            if(dic[char] == 0):
-                state = False
+    while(s == True):  
+        res = 0 
+        for key in dic.keys():
+            if(key in word):
+                if(key == "l" or key=="o"):
+                    dic[key]-=2
+                    res+=1
+                    if(dic[key]==0):
+                        s=False
+                else:
+                    dic[key]-=1
+                    res+=1
+                    if(dic[key] == 0):
+                        s = False
 
-s = "nlaebolko"
-MaxBaloons(s)
+        if(res == 5):
+            t+=1
+        else:
+            s = False
+    return(t)
+
+s = "loonbalxballpoon"
+print(MaxBaloons(s))
