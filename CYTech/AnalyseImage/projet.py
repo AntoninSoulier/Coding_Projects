@@ -56,13 +56,15 @@ def Compare(im_init,im_cache):
 
 def main():
 
+    im1.show()
+
+    #Image secrète Initiale
+    im2.show()
+
     HideImage()
     ExtractImage()
 
     im1.show()
-    
-    #Image secrète Initiale
-    im2.show()
     
     #Image cachée obtenue
     extracted_image.show()
@@ -81,3 +83,4 @@ def main():
     print(res)
 
 main()
+

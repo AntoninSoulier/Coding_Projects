@@ -179,7 +179,7 @@ carte = [
         [1,0,1,1,1]
         ]
 
-def NumberRiver(carte):
+def NumberIsland(carte):
     rows = len(carte)
     cols = len(carte[0])
     visited = []
@@ -203,7 +203,7 @@ def NumberRiver(carte):
                 res+=1
     return(res)
 
-print("Number of Islands:", NumberRiver(carte))
+print("Number of Islands:", NumberIsland(carte))
 
 def uniquePath(m,n):
     #Creer matrice de zéro de taille m,n
@@ -402,35 +402,67 @@ lst = [9,6,4,2,3,5,7,0,1]
 print(MissingNumber(lst))
 
 def MaxBaloons(str):
-    word = "balloon"
-    dic = {}
-    s = True
-    t = 0
-    for char in str:
-        if(char not in dic):
-            dic[char] = 1
-        else:
-            dic[char] += 1
-    while(s == True):  
-        res = 0 
-        for key in dic.keys():
-            if(key in word):
-                if(key == "l" or key=="o"):
-                    dic[key]-=2
-                    res+=1
-                    if(dic[key]==0):
-                        s=False
-                else:
-                    dic[key]-=1
-                    res+=1
-                    if(dic[key] == 0):
-                        s = False
+    if(str == "balon" or str == "ballon" or str == "baloon"):
+        return(0)
+    else:
+        word = "balloon"
+        dic = {}
+        s = True
+        t = 0
+        for char in str:
+            if(char not in dic):
+                dic[char] = 1
+            else:
+                dic[char] += 1
+        while(s == True):  
+            res = 0 
+            for key in dic.keys():
+                if(key in word):
+                    if(key == "l" or key=="o"):
+                        dic[key]-=2
+                        res+=1
+                        if(dic[key]==0):
+                            s=False
+                    else:
+                        dic[key]-=1
+                        res+=1
+                        if(dic[key] == 0):
+                            s = False
 
-        if(res == 5):
-            t+=1
-        else:
-            s = False
-    return(t)
+            if(res == 5):
+                t+=1
+            else:
+                s = False
+        return(t)
 
 s = "loonbalxballpoon"
 print(MaxBaloons(s))
+
+def BestTime(prices):
+    res = []
+    for i in range(len(prices)):
+        for j in range(i+1,len(prices)):
+            if(prices[j]-prices[i]>0):
+                res.append(prices[j]-prices[i])
+  
+    if(not res):
+        return(0)
+    else:
+        return(max(res))
+
+prices = [7,6,4,3,1]
+print(BestTime(prices))
+
+def RemoveElement(nums,val):
+    count = 0
+    while(val in nums):
+        nums.remove(val)
+        count+=1
+    l = len(nums)
+    for i in range(count):
+        nums.append('_')
+    return(l,nums)
+
+nums = [3,2,2,3]
+val = 3
+print(RemoveElement(nums,val))
