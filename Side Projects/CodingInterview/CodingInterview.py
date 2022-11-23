@@ -466,3 +466,22 @@ def RemoveElement(nums,val):
 nums = [3,2,2,3]
 val = 3
 print(RemoveElement(nums,val))
+
+def RotateArray(nums,k):
+    for i in range(k):
+        tmp = nums[-1]
+        nums = nums[0:-1]
+        nums.insert(0,tmp)
+    return nums
+
+def AnotherRotateArray(nums,k):
+    for _ in range(k):
+        copy = nums.copy()
+        for i in range(len(nums)):
+            nums[(i+1)%len(nums)] = copy[i]
+    return(nums)
+
+nums = [1,2,3,4,5,6,7]
+k = 3
+print(AnotherRotateArray(nums,k))
+
