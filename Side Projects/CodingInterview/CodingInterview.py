@@ -1,6 +1,8 @@
-from cmath import sqrt
-from tkinter import Grid
+#Coding Questions
 
+from collections import Counter
+import heapq
+import math
 
 def Convert(suite):
     if(len(suite) == 0):
@@ -101,7 +103,7 @@ products = ["mobile","mouse","moneypot","monitor","mousepad"]
 search_word = "mouse"
 TypeSearch(products,search_word)
 
-import math
+
 
 def closestPoint(points,k):
     dic = {}
@@ -218,7 +220,7 @@ def uniquePath(m,n):
     print("Number of paths:",matrice[m-1][n-1]) 
 
 uniquePath(2,3)
-
+ 
 def Reorganize(word):
     dic = {}
     organized = ""
@@ -459,7 +461,7 @@ def RemoveElement(nums,val):
         nums.remove(val)
         count+=1
     l = len(nums)
-    for i in range(count):
+    for _ in range(count):
         nums.append('_')
     return(l,nums)
 
@@ -485,3 +487,214 @@ nums = [1,2,3,4,5,6,7]
 k = 3
 print(AnotherRotateArray(nums,k))
 
+def ClimbingStairs(n):
+    lst = [x for x in range(n+1)]
+    lst[0] = 1
+    lst[1] = 1
+    for i in range(2,n+1):
+        lst[i] = lst[i-1]+lst[i-2]
+    return(lst[len(lst)-1])
+
+print("Number of ways to climb the stairs: " + str(ClimbingStairs(5)))
+
+def JewelsStones(jewels,stones):
+    res = 0
+    dic = {}
+    for i in range(len(jewels)):
+        dic[jewels[i]] = 1
+    for j in range(len(stones)):
+        if(stones[j] in dic):
+            res +=1
+    return(res)
+
+jewels = "aA"
+stones = "aAAbbbb"
+print("Nombre Bijoux: " + str(JewelsStones(jewels,stones)))
+
+def EmailAdresses(emails):
+    dic = {} 
+    res = 0
+    for  i in range(len(emails)):
+        email = emails[i].split("@")
+        domain = email[1]
+        name = email[0].replace('.','')
+        if("+" in name):
+            name = name.split("+")
+            name = name[0].replace('.','')
+        if(name not in dic.keys()):
+            dic[name] = []
+            dic[name].append(domain)
+        elif(name in dic.keys() and domain not in dic[name]):
+            dic[name].append(domain)
+    for k,v in dic.items():
+        res += len(v)
+    return(res)
+
+emails =   ["a@leetcode.com","b@leetcode.com","c@leetcode.com"]
+print("Nombre de mails envoyés: " + str(EmailAdresses(emails)))
+
+def FloodFill(image,sr,sc,color):
+    rows = len(image)
+    cols = len(image[0])
+
+    if(sr+1 in range(rows) and image[sr+1][sc] == image[sr][sc]):
+        image[sr+1][sc] = color 
+    if(sr-1 in range(rows) and image[sr-1][sc] == image[sr][sc]):
+        image[sr-1][sc] = color  
+    if(sc+1 in range(cols) and image[sr][sc+1] == image[sr][sc]):
+        image[sr][sc+1] = color
+    if(sc-1 in range(cols) and image[sr][sc-1] == image[sr][sc]):
+        image[sr][sc-1] = color 
+    return(image)
+
+image = [[1,1,1],[1,1,0],[1,0,1]]
+sr = 1
+sc = 1
+color = 2
+t = FloodFill(image,sr,sc,color)
+for i in range(len(t)):
+    print(t[i])
+
+
+def Mostwater(height):
+    val = 0
+    for i in range(len(height)):
+        for j in range(i+1,len(height)):
+            tmp = (j-i) * min(height[i],height[j])
+            if(tmp>val):val = tmp
+    return(val)
+
+height = [1,8,6,2,5,4,8,3,7]
+print(Mostwater(height))
+
+def Linked(lists):
+    lst = []
+    final = []
+    while(any(lists)):
+        for i in range(len(lists)):
+            if(len(lists[i])!=0):
+                tmp = lists[i][0]
+                del lists[i][0]
+                lst.append(tmp)    
+        final += lst
+        lst.clear()
+    final.sort()
+    return(final)
+
+lists = [[1,4,5],[1,3,4],[2,6]]
+print(Linked(lists))
+
+def GroupedAnagrams(strs):
+    fin = []
+    while(len(strs)!=0):
+        tmp = strs[0]
+        del strs[0]
+        tmp_lst = []
+        tmp_lst.append(tmp)
+        if(len(strs)!=0):
+            for j in range(len(strs)):
+                print(strs[j])
+                if(Counter(tmp) == Counter(strs[j])):
+                    tmp_lst.append(strs[j])
+        for i in range(1,len(tmp_lst)):
+            strs.remove(tmp_lst[i])
+        fin.append(tmp_lst)
+    return(fin)
+
+strs = ["eat","tea","tan","ate","nat","bat"]
+print(GroupedAnagrams(strs))
+
+def ArrayParity(nums):
+    even = []
+    odd = []
+    for element in nums:
+        if(element%2==0):
+            even.append(element)
+        else:
+            odd.append(element)
+    return(even+odd)
+
+nums = [3,1,2,4]
+print(ArrayParity(nums))
+
+"""
+class TreeNode:
+    def __init__(self,val = 0, left = None, right = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def maxDepth(root: Optional[TreeNode]):
+    if(root == None):
+        return 0
+    left = maxDepth(root.left)
+    right = maxDepth(root.right)
+    return(max(left,right)+1)
+
+root = Optional[TreeNode]
+root = [3,9,20,None,None,15,7]
+print(maxDepth(root))
+"""
+
+def LongestCommonPrefix(strs):
+    s = min(strs, key=len)
+    prefix = ""
+    for i in range(len(s)):
+        res = 0
+        for j in range(len(strs)):
+            if(s[i] == strs[j][i]):
+               res += 1
+        if(res == len(strs)):
+            prefix+=s[i]
+        else:
+            return(prefix)
+    return(prefix) 
+
+strs = ["flower","flow","flight"]
+print(LongestCommonPrefix(strs))
+
+def coinChange(coins,amount):
+    dp = [x for x in range(amount+1)]
+    for i in range(len(dp)):
+        dp[i] = amount+1
+    dp[0] = 0
+    for i in range(amount+1):
+        for j in range(len(coins)):
+            if(coins[j] <= i):
+                dp[i] = min(dp[i], 1 + dp[i - coins[j]])
+    if(dp[amount] > amount):
+        return(-1)
+    else:
+        return dp[amount]
+
+coins = [1,2,5]
+amount = 11
+print(coinChange(coins,amount))
+
+def removeVowels(s):
+    vowels = ["a","e","i","o","u"]
+    for char in s:
+        if(char in vowels):
+            s = s.replace(char,'')
+    return(s)
+
+s = "leetcodeisacommunityforcoders"
+print(removeVowels(s))
+
+def lastStoneWeight(stones):
+    while(len(stones)!=1):
+        stones.sort()
+        x = stones[len(stones)-2]
+        y = stones[len(stones)-1]
+        if(x == y):
+            stones.remove(x)
+            stones.remove(y)
+        else:
+            stones.remove(x)
+            stones[len(stones)-1] = y - x
+        if(len(stones)==0):
+            return(0)
+    return(stones[0])
+
+stones = [2,7,4,1,8,1]
+print(lastStoneWeight(stones))
