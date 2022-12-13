@@ -698,3 +698,13 @@ def lastStoneWeight(stones):
 
 stones = [2,7,4,1,8,1]
 print(lastStoneWeight(stones))
+
+def roundFavs(n):
+    if(len(str(n))>3 and len(str(n))<=6):
+        return(str(n)[0:len(str(n))-3]+","+str(n)[len(str(n))-3]+" k")
+    elif(len(str(n))>6 and len(str(n))<=9):    
+        return(str(n)[0:len(str(n))-6]+","+str(n)[len(str(n))-6]+" M")
+    elif(len(str(n))>9):
+        return(str(n)[0:len(str(n))-9]+","+str(n)[len(str(n))-9]+" Md")
+        
+print(roundFavs(456895))
