@@ -708,3 +708,69 @@ def roundFavs(n):
         return(str(n)[0:len(str(n))-9]+","+str(n)[len(str(n))-9]+" Md")
         
 print(roundFavs(456895))
+
+def sort_diff(t):
+    res = []
+    for _ in range(len(t)):
+        tmp = min(t)
+        res.append(tmp)
+        t.remove(tmp)
+    return res
+
+def sort_same(t):
+    while(True):
+        test = 0
+        for i in range(len(t)-1):
+            if(t[i]>t[i+1]):
+                tmp=t[i]
+                t[i] = t[i+1]
+                t[i+1] = tmp
+                test+=1
+        if(test == 0):
+            return(t)
+
+t = [4,8,7,3,5,1]
+print(sort_diff(t))
+s = [4,8,7,3,5,1]
+print(sort_same(s))
+
+def minimumCostConnectStick(sticks):
+    cost = 0
+    while(True):
+        if(len(sticks) == 1):
+            return(cost)
+        min1_stick = min(sticks)
+        sticks.remove(min1_stick)
+        min2_stick = min(sticks)
+        sticks.append(min1_stick)
+        new_stick = min1_stick + min2_stick
+        cost += new_stick
+        sticks.remove(min1_stick)
+        sticks.remove(min2_stick)
+        sticks.append(new_stick)
+        
+sticks = [2,4,3]
+print("Minimum cost: " + str(minimumCostConnectStick(sticks)))
+
+def Compress(chars):
+    char_dic = {}
+    for char in chars:
+        if(char not in char_dic):
+            char_dic[char] = 1
+        else: 
+            char_dic[char] += 1
+    chars.clear()
+    for key,val in char_dic.items():
+        if(val == 1):
+            chars.append(key)
+        elif(val > 9):
+            chars.append(key)
+            for digit in str(val):
+                chars.append(digit)
+        else:
+            chars.append(key)
+            chars.append(str(val))
+    return(len(chars))
+
+chars = ["a","a","b","b","c","c","c"]
+print(Compress(chars))
