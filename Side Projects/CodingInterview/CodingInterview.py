@@ -470,7 +470,7 @@ val = 3
 print(RemoveElement(nums,val))
 
 def RotateArray(nums,k):
-    for i in range(k):
+    for _ in range(k):
         tmp = nums[-1]
         nums = nums[0:-1]
         nums.insert(0,tmp)
@@ -773,4 +773,197 @@ def Compress(chars):
     return(len(chars))
 
 chars = ["a","a","b","b","c","c","c"]
-print(Compress(chars))
+print("Compressed: " + str(Compress(chars)))
+
+def HouseRobber(nums):
+    rob1, rob2 = 0, 0
+
+    # [rob1, rob2, n, n+1, ...]
+    for n in nums:
+        temp = max(n+rob1, rob2)
+        rob1 = rob2
+        rob2 = temp
+    return rob2
+
+nums = [2,7,9,3,1]
+print("Total amount: " + str(HouseRobber(nums)))
+
+def TwoSum(nums,target):
+    for i in range(len(nums)):
+        for j in range(i+1,len(nums)):
+            if(nums[i]+nums[j]==target):
+                return([i,j])
+
+nums = [2,7,11,15]
+target = 9
+print("indices: " + str(TwoSum(nums,target)))
+
+def NotRepeating(substring):
+    list_of_char = []
+    for char in substring:
+        if(char in list_of_char):
+            return(False)
+        list_of_char.append(char)
+    return(True)
+
+def LongestSubString(s):
+    length_of_substrings = []
+    if(len(s) == 0):
+        return(0)
+    elif(len(s) == 1):
+        return(1)
+    else:
+        for i in range(len(s)):
+            for j in range(i,len(s)):
+                if(NotRepeating(s[i:j+1]) == True):
+                    length_of_substrings.append(len(s[i:j+1]))
+    return(max(length_of_substrings))
+
+s = "pwwkew"
+print(LongestSubString(s))
+
+def mySqrt(x):
+    for value in range(x,-1,-1):
+        if(value * value <= x):
+            return(value)
+
+x = 0
+print("Squared Root: " +  str(mySqrt(x)))
+
+import re
+def ValidPalindrom(s):
+    if(len(s) == 0):
+        return(True)
+    else:
+        new_s = re.sub(r'[\W_]','',s)
+        new_s = new_s.lower()
+        i = 0
+        j = len(new_s)-1
+        while(i<j):
+            if(new_s[i] == new_s[j]):
+                i+=1
+                j-=1
+            else:
+                return(False)      
+        return(True)
+
+s =  "A man, a plan, a canal: Panama"
+print(ValidPalindrom(s))
+
+def findMedianSortedArrays(nums1,nums2):
+    nums = nums1 + nums2
+    nums.sort()
+    if(len(nums)%2 == 1):
+        median_index = int(len(nums)/2)
+        return(nums[median_index])
+    else:
+        median_index = int(len(nums)/2)
+        return((nums[median_index] + nums[median_index-1])/2)
+
+nums1 = [1,2]
+nums2 = [3,4]
+print("Median: " + str(findMedianSortedArrays(nums1,nums2)))
+
+def reverse(x):
+    if(x==0):
+        return(0)
+    else:
+        str_x = str(x)
+        new_s = ""
+        if(str_x[0] == '-'):
+            new_s += '-'
+            for i in range(len(str_x)-1,0,-1):
+                new_s += str_x[i]
+        else:
+            for i in range(len(str_x)-1,-1,-1):
+                new_s += str_x[i]
+
+        if(int(new_s) < -2147483648 or int(new_s) > 2147483647):
+            return(0)
+        else:
+            return(int(new_s))
+
+x = 123020
+print(reverse(x))
+
+def threeSum(nums):
+    res = []
+    for i in range(len(nums)-2):
+        count = 0
+        tmp_lst = []
+        for j in range(i,i+3):
+            tmp_lst.append(nums[j])
+            count += nums[j]
+        if(count==0):
+            res.append(tmp_lst)
+    return(res)
+
+nums = [-1,0,1,2,-1,-4]
+#print(threeSum(nums))
+
+def MaxDepthBinaryTree(root):
+    if not root:
+        return 0
+        
+    stack = [[root, 1]]
+    res = 1 #depth
+
+    while(stack):
+        node, depth = stack.pop()
+        if(node != None):
+           res =  max(res,depth)
+           stack.append([node.left, depth+1])
+           stack.append([node.right, depth+1])
+    return(res)
+
+#root = [3,9,20,None,None,15,7]
+
+def pascalTriangle(numRows):
+    if(numRows == 1):
+        return([[1]])
+    res = []
+    res.append([1])
+    res.append([1,1])
+    for _ in range(2,numRows):
+        tmp = []
+        tmp.append(1)
+        for j in range(0,len(res[-1])-1):
+            tmp.append(res[-1][j]+res[-1][j+1])
+        tmp.append(1)
+        res.append(tmp)
+    return(res)
+
+numRows = 5
+print(pascalTriangle(numRows))
+
+# Algorithm works but the runtime's too long
+def longestConsecutive(nums):
+    if(len(nums) == 0):
+        return(0)
+    else:
+        tab = []  
+        for num in nums:  
+            if(num - 1 not in nums):  
+                count = 0
+                while(num+1 in nums):
+                    num+=1
+                    count+=1
+                tab.append(count)
+    return(max(tab)+1)
+
+nums = [9,1,4,7,3,-1,0,5,8,-1,6]
+print(longestConsecutive(nums))
+
+def majorityElement(nums):
+    dic = {}
+    for num in nums:
+        if(num in dic):
+            dic[num] += 1
+        else:
+            dic[num] = 1
+    for k,v in dic.items():
+        if(v > len(nums)/2):
+            return(k)
+
+nums = [2,2,1,1,1,2,2]
+print(majorityElement(nums)) 

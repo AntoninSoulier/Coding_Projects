@@ -11,6 +11,7 @@ import pandas as pd
 import seaborn as sns
 import cv2
 import IPython
+
 #from six.moves import urllib
 print(tf.__version__)
 
